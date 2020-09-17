@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+    <script src="app.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+    <div class="content">
+        <div class="wrapper">
+            <p class="title">TO-DO LIST</p>
+            <div class="flex">
+                <input type="text" id="taskInput" placeholder="add task">
+                <button onclick="createTask()" class="button"><span
+                        class="material-icons md-18">note_add</span></button>
+                </div>
+            <div id="toDo"></div>
+        </div>
+    </div>
+</body>
+
+</html>
