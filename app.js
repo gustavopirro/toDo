@@ -38,7 +38,7 @@ let editTask = (taskId) => {
             removeAllChildNodes(task);
 
             task.appendChild(input)
-            task.appendChild(createButtons(taskId, 'done', function(){confirmTaskEdit(allTasks,taskId)}).button);
+            task.appendChild(createButtons(taskId, 'done', function(){confirmTaskEdit(allTasks,taskId)}));
             
 }
 
@@ -74,7 +74,7 @@ let createButtons = (taskId, buttonName, onClickFunction) => {
         spanIcon.appendChild(nodeIcon);
         button.appendChild(spanIcon);
 
-    return { button: button};
+    return button;
 }
 
 let checkIfExists = (id, array) => {
@@ -102,8 +102,8 @@ let updateInterface = (taskArray) => {
         div.classList.add('buttons')
 
         listItem.appendChild(p)
-        div.appendChild(createButtons(id,'edit', function(){editTask(id)}).button);
-        div.appendChild(createButtons(id, 'delete',function(){deleteTask(id)}).button);
+        div.appendChild(createButtons(id,'edit', function(){editTask(id)}));
+        div.appendChild(createButtons(id, 'delete',function(){deleteTask(id)}));
         listItem.appendChild(div);
         toDo.appendChild(listItem);
     }
