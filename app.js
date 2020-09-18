@@ -6,6 +6,7 @@ let createTask = () => {
         let task = {
             Id: taskId,
             taskValue: document.getElementById('taskInput').value,
+
         }
 
         allTasks.push(task);
@@ -17,15 +18,32 @@ let createTask = () => {
     }
 }
 
-let updateTask = (taskId) => {
-       document.getElementById(taskId).innerHTML = 
-        `<input type="text" id="taskUpdate" placeholder="${allTasks[taskId].taskValue}">
-        <button onclick="confirmTaskEdit(allTasks,${taskId})"><span class="material-icons">done</span></button>`;
+let editTask = (taskId) => {
 
+            let input = document.createElement('input');
+            input.id = 'taskUpdate';
+            input.placeholder = allTasks[taskId].taskValue;
+
+            
+            let confirmEditButton = document.createElement('button');
+            confirmEditButton.onclick = function(){confirmTaskEdit(allTasks,taskId);};
+
+            let doneIcon = document.createElement('span');
+            doneIcon.classList.add('material-icons','md-18');
+            doneIcon.textContent = 'done';
+            
+
+            let task = document.getElementById(taskId);
+            
+            removeAllChildNodes(task);
+
+            task.appendChild(input)
+            task.appendChild(createButtons(taskId, 'done', function(){confirmTaskEdit(allTasks,taskId)}));
+            
 }
 
-let confirmTaskEdit = (array,taskId) =>{
-    if(isFieldEmpty('taskUpdate')){
+let confirmTaskEdit = (array, taskId) => {
+    if (isFieldEmpty('taskUpdate')) {
         array[taskId].taskValue = document.getElementById('taskUpdate').value;
     }
     updateInterface(allTasks)
@@ -34,7 +52,6 @@ let confirmTaskEdit = (array,taskId) =>{
 let deleteTask = (taskId) => {
     allTasks.splice(taskId, 1);
     updateInterface(allTasks);
-    console.log(allTasks)
 }
 
 let isFieldEmpty = (fieldId) => {
@@ -45,13 +62,19 @@ let isFieldEmpty = (fieldId) => {
     return true;
 }
 
-let createButtons = (taskId) => {
-    let editButton = `<button class="button" onclick="updateTask(${taskId})"><span class="material-icons md-18">
-    edit
-    </span></button>`;
-    let deleteButton = `<button class="button" onclick="deleteTask(${taskId})"><span class="material-icons md-18">
-    clear</span></button>`;
-    return { editButton, deleteButton };
+let createButtons = (taskId, buttonName, onClickFunction) => {
+
+        let button = document.createElement('button');
+        button.id = taskId;
+        button.classList.add('button');
+        button.onclick = onClickFunction;
+        let spanIcon = document.createElement('span');
+        spanIcon.classList.add('material-icons', 'md-18');
+        let nodeIcon = document.createTextNode(buttonName)
+        spanIcon.appendChild(nodeIcon);
+        button.appendChild(spanIcon);
+
+    return button;
 }
 
 let checkIfExists = (id, array) => {
@@ -65,14 +88,25 @@ let checkIfExists = (id, array) => {
 let updateInterface = (taskArray) => {
     let toDo = document.getElementById('toDo');
     removeAllChildNodes(toDo);
-    for (id = 0; id < taskArray.length; id++) {
+    for (let id = 0; id < taskArray.length; id++) {
         let listItem = document.createElement('LI');
-        listItem.classList.add('listStyleRemover','flexButtons', 'underline')
-        listItem.innerHTML = `<p class="toDoItem">${taskArray[id].taskValue}</p><div class="buttons">${createButtons(id).editButton}${createButtons(id).deleteButton}</div>`
         listItem.id = id;
+        listItem.classList.add('listStyleRemover', 'flexButtons')
+
+        let p = document.createElement('p')
+        p.classList.add('toDoItem');
+        p.textContent = taskArray[id].taskValue
+        
+
+        let div = document.createElement('div')
+        div.classList.add('buttons')
+
+        listItem.appendChild(p)
+        div.appendChild(createButtons(id,'edit', function(){editTask(id)}));
+        div.appendChild(createButtons(id, 'delete',function(){deleteTask(id)}));
+        listItem.appendChild(div);
         toDo.appendChild(listItem);
     }
-
 }
 
 let removeAllChildNodes = (parentNode) => {
