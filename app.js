@@ -24,22 +24,22 @@ let editTask = (taskId) => {
             input.id = 'taskUpdate';
             input.placeholder = allTasks[taskId].taskValue;
 
+            
             let confirmEditButton = document.createElement('button');
             confirmEditButton.onclick = function(){confirmTaskEdit(allTasks,taskId);};
 
             let doneIcon = document.createElement('span');
             doneIcon.classList.add('material-icons','md-18');
             doneIcon.textContent = 'done';
+            
 
             let task = document.getElementById(taskId);
             
             removeAllChildNodes(task);
 
-            confirmEditButton.appendChild(doneIcon);
             task.appendChild(input)
-            task.appendChild(confirmEditButton);
+            task.appendChild(createButtons(taskId, 'done', function(){confirmTaskEdit(allTasks,taskId)}).button);
             
-
 }
 
 let confirmTaskEdit = (array, taskId) => {
@@ -52,7 +52,6 @@ let confirmTaskEdit = (array, taskId) => {
 let deleteTask = (taskId) => {
     allTasks.splice(taskId, 1);
     updateInterface(allTasks);
-    console.log(allTasks)
 }
 
 let isFieldEmpty = (fieldId) => {
@@ -66,8 +65,9 @@ let isFieldEmpty = (fieldId) => {
 let createButtons = (taskId, buttonName, onClickFunction) => {
 
         let button = document.createElement('button');
+        button.id = taskId;
         button.classList.add('button');
-        button.onclick = function () { onClickFunction(taskId) };
+        button.onclick = onClickFunction;
         let spanIcon = document.createElement('span');
         spanIcon.classList.add('material-icons', 'md-18');
         let nodeIcon = document.createTextNode(buttonName)
@@ -88,10 +88,10 @@ let checkIfExists = (id, array) => {
 let updateInterface = (taskArray) => {
     let toDo = document.getElementById('toDo');
     removeAllChildNodes(toDo);
-    for (id = 0; id < taskArray.length; id++) {
+    for (let id = 0; id < taskArray.length; id++) {
         let listItem = document.createElement('LI');
         listItem.id = id;
-        listItem.classList.add('listStyleRemover', 'flexButtons', 'underline')
+        listItem.classList.add('listStyleRemover', 'flexButtons')
 
         let p = document.createElement('p')
         p.classList.add('toDoItem');
@@ -102,8 +102,9 @@ let updateInterface = (taskArray) => {
         div.classList.add('buttons')
 
         listItem.appendChild(p)
-        listItem.appendChild(createButtons(id,'edit',editTask).button);
-        listItem.appendChild(createButtons(id, 'delete',deleteTask).button);
+        div.appendChild(createButtons(id,'edit', function(){editTask(id)}).button);
+        div.appendChild(createButtons(id, 'delete',function(){deleteTask(id)}).button);
+        listItem.appendChild(div);
         toDo.appendChild(listItem);
     }
 }
