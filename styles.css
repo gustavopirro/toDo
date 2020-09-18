@@ -27,7 +27,14 @@ body{
 
 #taskInput{
     border-style: none;
-    box-shadow: 0.5px 0.5px 1px rgb(83, 83, 83)
+    box-shadow: 0.5px 0.5px 1px rgb(83, 83, 83);
+    width: 200px;
+}
+
+#taskUpdate{
+    width: 200px;
+    border-style: none;
+    box-shadow: 0.5px 0.5px 1px rgb(83, 83, 83);
 }
 .content{
     width: 100%;
@@ -45,7 +52,7 @@ body{
 
 #toDo{
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
 }
 
 .flexButtons{
@@ -67,7 +74,7 @@ body{
     background-color: white;
     border-radius: 5%;
     border-style: none;
-    margin: 5px 5px;
+    margin: 10px 5px;
     box-shadow: 1px 1px 1px rgb(116, 116, 116)
 }
 
