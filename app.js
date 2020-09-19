@@ -1,119 +1,109 @@
-let allTasks = [];
-let taskId = 0;
+class App {
+    constructor () {
+        this.taskManager = new TaskManager();
+        //this.taskId = 0;
+    }
 
-let createTask = () => {
-    if (isFieldEmpty('taskInput')) {
-        let task = {
-            Id: taskId,
-            taskValue: document.getElementById('taskInput').value,
-
+    createTask () {
+        if (!this.isFieldEmpty(`taskInput`)) {
+            const content = document.getElementById(`taskInput`).value
+            let task = new Task(content);
+            this.taskManager.addTask(task);
+            this.updateInterface();
+        } else {
+            alert(`Please add task in the input field`);
         }
-
-        allTasks.push(task);
-        taskId++;
-        updateInterface(allTasks)
-
-    } else {
-        alert('Please add task in the input field');
     }
-}
 
-let editTask = (taskId) => {
+    editTask (taskId) {
+        const task = this.taskManager.getTask(taskId)
 
-            let input = document.createElement('input');
-            input.id = 'taskUpdate';
-            input.placeholder = allTasks[taskId].taskValue;
+        let input = document.createElement(`input`);
+        input.id = `taskUpdate`;
+        input.placeholder = task.content;
 
-            
-            let confirmEditButton = document.createElement('button');
-            confirmEditButton.onclick = function(){confirmTaskEdit(allTasks,taskId);};
+        
+        let confirmEditButton = document.createElement(`button`);
+        confirmEditButton.onclick = function () {
+            this.submitTaskEdit(taskId); // are we really supposed to pass the taskManager around like this?
+        };
 
-            let doneIcon = document.createElement('span');
-            doneIcon.classList.add('material-icons','md-18');
-            doneIcon.textContent = 'done';
-            
+        let doneIcon = document.createElement(`span`);
+        doneIcon.classList.add(`material-icons`,`md-18`);
+        doneIcon.textContent = `done`;
 
-            let task = document.getElementById(taskId);
-            
-            removeAllChildNodes(task);
+        let taskElement = document.getElementById(taskId);
+        
+        this.removeAllChildNodes(taskElement);
 
-            task.appendChild(input)
-            task.appendChild(createButtons(taskId, 'done', function(){confirmTaskEdit(allTasks,taskId)}));
-            
-}
+        taskElement.appendChild(input);
+        const doneButton = this.createButtons(taskId, `done`, _ => {this.submitTaskEdit(taskId)});
+        taskElement.appendChild(doneButton);
 
-let confirmTaskEdit = (array, taskId) => {
-    if (isFieldEmpty('taskUpdate')) {
-        array[taskId].taskValue = document.getElementById('taskUpdate').value;
     }
-    updateInterface(allTasks)
-}
 
-let deleteTask = (taskId) => {
-    allTasks.splice(taskId, 1);
-    updateInterface(allTasks);
-}
-
-let isFieldEmpty = (fieldId) => {
-    let content = document.getElementById(fieldId).value;
-    if (!content) {
-        return false;
+    submitTaskEdit (taskId) {
+        if (!this.isFieldEmpty('taskUpdate')) {
+            this.taskManager.getTask(taskId).content = document.getElementById(`taskUpdate`).value;
+        }
+        this.updateInterface()
     }
-    return true;
-}
 
-let createButtons = (taskId, buttonName, onClickFunction) => {
+    deleteTask (taskId) {
+        this.taskManager.deleteTask(taskId);
+        this.updateInterface(); // does not belong here
+    }
 
-        let button = document.createElement('button');
+    isFieldEmpty (fieldId) {
+        let content = document.getElementById(fieldId).value;
+        return !content;
+    }
+
+    createButtons (taskId, buttonName, onClickFunction) {
+
+        let button = document.createElement(`button`);
         button.id = taskId;
-        button.classList.add('button');
+        button.classList.add(`button`);
         button.onclick = onClickFunction;
-        let spanIcon = document.createElement('span');
-        spanIcon.classList.add('material-icons', 'md-18');
+        let spanIcon = document.createElement(`span`);
+        spanIcon.classList.add(`material-icons`, `md-18`);
         let nodeIcon = document.createTextNode(buttonName)
         spanIcon.appendChild(nodeIcon);
         button.appendChild(spanIcon);
 
-    return button;
-}
+        return button;
+    }
 
-let checkIfExists = (id, array) => {
-    if (id === array[id].Id) {
-        return true;
-    } else {
-        console.log('The id does not exists')
-    };
-}
+    updateInterface () {
+        let toDo = document.getElementById(`toDo`);
+        this.removeAllChildNodes(toDo);
+        for (let id = 0; id < this.taskManager.tasks.length; ++id) {
+            let listItem = document.createElement(`LI`);
+            listItem.id = id;
+            listItem.classList.add(`listStyleRemover`, `flexButtons`)
 
-let updateInterface = (taskArray) => {
-    let toDo = document.getElementById('toDo');
-    removeAllChildNodes(toDo);
-    for (let id = 0; id < taskArray.length; id++) {
-        let listItem = document.createElement('LI');
-        listItem.id = id;
-        listItem.classList.add('listStyleRemover', 'flexButtons')
+            let p = document.createElement(`p`)
+            p.classList.add(`toDoItem`);
+            p.textContent = this.taskManager.getTask(id).content
+            
 
-        let p = document.createElement('p')
-        p.classList.add('toDoItem');
-        p.textContent = taskArray[id].taskValue
-        
+            let div = document.createElement(`div`)
+            div.classList.add(`buttons`)
 
-        let div = document.createElement('div')
-        div.classList.add('buttons')
+            const editButton = this.createButtons(id, `edit`, _ => {this.editTask(id)}),
+                deleteButton = this.createButtons(id, `delete`, _ => {this.deleteTask(id)})
 
-        listItem.appendChild(p)
-        div.appendChild(createButtons(id,'edit', function(){editTask(id)}));
-        div.appendChild(createButtons(id, 'delete',function(){deleteTask(id)}));
-        listItem.appendChild(div);
-        toDo.appendChild(listItem);
+            listItem.appendChild(p);
+            div.appendChild(editButton);
+            div.appendChild(deleteButton);
+            listItem.appendChild(div);
+            toDo.appendChild(listItem);
+        }
+    }
+
+    removeAllChildNodes (parentNode) {
+        while (parentNode.firstChild) {
+            parentNode.removeChild(parentNode.firstChild)
+        }
     }
 }
-
-let removeAllChildNodes = (parentNode) => {
-    while (parentNode.firstChild) {
-        parentNode.removeChild(parentNode.firstChild)
-    }
-}
-
-
-
